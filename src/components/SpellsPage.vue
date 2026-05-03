@@ -1,8 +1,8 @@
 <template>
-  <div style="display: flex; flex-direction: column; gap: 14px;">
+  <div class="spells-page">
     <Frame>
       <SectionTitle>Spellcasting</SectionTitle>
-      <div :style="topGrid">
+      <div :style="topGrid" class="spells-top-grid">
         <div>
           <AppInput :model-value="char.spellcastingClass" @update:model-value="v => update({ spellcastingClass: v })" align="center" display
             :style-overrides="{ fontSize: '18px', fontWeight: 700 }" />
@@ -26,7 +26,7 @@
       </div>
     </Frame>
 
-    <div :style="row2">
+    <div :style="row2" class="spells-row spells-row-2">
       <Frame>
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
           <div :style="badgeStyle">0</div>
@@ -40,20 +40,20 @@
       </Frame>
       <SpellLevel :level="1" :count="13" :char="char" :update="update" />
     </div>
-    <div :style="row2">
+    <div :style="row2" class="spells-row spells-row-2">
       <SpellLevel :level="2" :count="13" :char="char" :update="update" />
       <SpellLevel :level="3" :count="13" :char="char" :update="update" />
     </div>
-    <div :style="row2">
+    <div :style="row2" class="spells-row spells-row-2">
       <SpellLevel :level="4" :count="13" :char="char" :update="update" />
       <SpellLevel :level="5" :count="11" :char="char" :update="update" />
     </div>
-    <div :style="row3">
+    <div :style="row3" class="spells-row spells-row-3">
       <SpellLevel :level="6" :count="9" :char="char" :update="update" />
       <SpellLevel :level="7" :count="9" :char="char" :update="update" />
       <SpellLevel :level="8" :count="7" :char="char" :update="update" />
     </div>
-    <div :style="row2">
+    <div :style="row2" class="spells-row spells-row-2">
       <SpellLevel :level="9" :count="7" :char="char" :update="update" />
       <div />
     </div>
@@ -93,3 +93,34 @@ const cantripsLabelStyle = {
   letterSpacing: '0.22em', color: C.inkFaint, textTransform: 'uppercase', fontWeight: 600,
 }
 </script>
+
+<style>
+.spells-page {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.spells-row {
+  min-width: 0;
+}
+
+@media (max-width: 1100px) {
+  .spells-top-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .spells-row-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .spells-top-grid,
+  .spells-row-2,
+  .spells-row-3 {
+    grid-template-columns: 1fr !important;
+  }
+}
+</style>

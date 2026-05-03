@@ -1,5 +1,5 @@
 <template>
-  <aside :style="drawerStyle">
+  <aside :style="drawerStyle" class="guide-drawer">
     <div :style="headerStyle">
       <div :style="titleStyle">❦&nbsp;&nbsp;Player's Guide</div>
       <button :style="closeBtnStyle" @click="close" title="Close guide">✕</button>
@@ -64,3 +64,28 @@ const scrollStyle = {
   padding: '24px 20px 32px',
 }
 </script>
+
+<style>
+@media (max-width: 1200px) {
+  .guide-drawer {
+    width: 360px !important;
+  }
+}
+
+@media (max-width: 960px) {
+  .guide-drawer {
+    width: 100% !important;
+    position: static !important;
+    height: auto !important;
+    max-height: none !important;
+    border-left: none !important;
+    border-top: 1px solid #8b5a2b !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .guide-drawer {
+    width: 100% !important;
+  }
+}
+</style>

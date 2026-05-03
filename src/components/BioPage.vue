@@ -1,9 +1,9 @@
 <template>
-  <div :style="pageGrid">
-    <div style="display: flex; flex-direction: column; gap: 14px;">
+  <div :style="pageGrid" class="bio-page-grid">
+    <div class="bio-col">
       <Frame>
         <SectionTitle>Character Appearance</SectionTitle>
-        <div :style="appearanceGrid">
+        <div :style="appearanceGrid" class="appearance-grid">
           <div v-for="[k, lbl] in appearanceFields" :key="k">
             <AppInput :model-value="char[k]" @update:model-value="v => update({ [k]: v })" align="center" display
               :style-overrides="{ fontWeight: 600, fontSize: '14px' }" />
@@ -30,8 +30,8 @@
           :style-overrides="{ fontSize: '13px', padding: '6px', border: `1px dotted ${C.ruleSoft}` }" />
       </Frame>
     </div>
-    <div style="display: flex; flex-direction: column; gap: 14px;">
-      <Frame :style-overrides="{ flex: 1, minHeight: '420px' }">
+    <div class="bio-col">
+      <Frame :style-overrides="{ flex: 1, minHeight: '420px' }" class="backstory-frame">
         <SectionTitle>Character Backstory</SectionTitle>
         <AppInput multiline :rows="22" :model-value="char.backstory" @update:model-value="v => update({ backstory: v })"
           placeholder="The tale of how you came to adventure…"
@@ -61,6 +61,35 @@ const appearanceFields = [
   ['eyes', 'Eyes'], ['skin', 'Skin'], ['hair', 'Hair'],
 ]
 
-const pageGrid = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }
+const pageGrid = { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '16px' }
 const appearanceGrid = { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '12px' }
 </script>
+
+<style>
+.bio-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .bio-page-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .appearance-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .backstory-frame {
+    min-height: 320px !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .appearance-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+</style>

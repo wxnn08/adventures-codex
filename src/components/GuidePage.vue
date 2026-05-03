@@ -83,7 +83,7 @@
       </GuideTip>
 
       <!-- Optional reference table -->
-      <div v-if="section.table" :style="tableWrapStyle">
+      <div v-if="section.table" :style="tableWrapStyle" class="guide-table-wrap">
         <div :style="tableTitleStyle">{{ section.table.title }}</div>
         <table :style="tableStyle">
           <thead>
@@ -145,7 +145,7 @@
       </div>
 
       <!-- Navigation -->
-      <div :style="navRowStyle">
+      <div :style="navRowStyle" class="guide-nav-row">
         <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px;">
           <button
             v-if="state.current > 0"
@@ -959,3 +959,29 @@ const continueBtnStyle = (active) => ({
   boxShadow: active ? `inset 0 -2px 0 ${C.goldHi}` : 'none',
 })
 </script>
+
+<style>
+@media (max-width: 640px) {
+  .guide-table-wrap {
+    overflow-x: auto !important;
+  }
+
+  .guide-table-wrap table {
+    min-width: 420px;
+  }
+
+  .guide-nav-row {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 10px;
+  }
+
+  .guide-nav-row > div {
+    width: 100%;
+  }
+
+  .guide-nav-row > div:last-child {
+    justify-content: space-between;
+  }
+}
+</style>

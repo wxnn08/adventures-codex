@@ -1,17 +1,17 @@
 <template>
-  <div :style="grid">
-    <div style="display: flex; flex-direction: column; gap: 14px;">
+  <div :style="grid" class="stats-page-grid">
+    <div class="stats-col">
       <div data-guide-section="inspiration proficiency" :style="hl('inspiration', 'proficiency')"><InspirationProf :char="char" :update="update" /></div>
       <div data-guide-section="abilities" :style="hl('abilities')"><Abilities :char="char" :update="update" /></div>
       <div data-guide-section="saving-throws" :style="hl('saving-throws')"><SavingThrows :char="char" :update="update" /></div>
       <div data-guide-section="skills" :style="hl('skills')"><SkillsList :char="char" :update="update" /></div>
       <PassivePerception :char="char" />
     </div>
-    <div style="display: flex; flex-direction: column; gap: 14px;">
+    <div class="stats-col">
       <div data-guide-section="combat" :style="hl('combat')"><CombatRow :char="char" :update="update" /></div>
       <div data-guide-section="hp" :style="hl('hp')"><HPDeath :char="char" :update="update" /></div>
       <div data-guide-section="attacks" :style="hl('attacks')"><Attacks :char="char" :update="update" /></div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+      <div class="stats-mid-grid">
         <div data-guide-section="equipment" :style="hl('equipment')"><Equipment :char="char" :update="update" /></div>
         <div data-guide-section="proficiencies-block" :style="hl('proficiencies-block')"><Proficiencies :char="char" :update="update" /></div>
       </div>
@@ -41,7 +41,7 @@ defineProps({ char: Object, update: Function })
 
 const highlight = useHighlight()
 
-const grid = { display: 'grid', gridTemplateColumns: '280px 1fr', gap: '18px' }
+const grid = { display: 'grid', gridTemplateColumns: 'minmax(0, 280px) minmax(0, 1fr)', gap: '18px' }
 
 function hl(...ids) {
   const isActive = ids.some(id => highlight.active.value === id)
@@ -56,3 +56,30 @@ function hl(...ids) {
   }
 }
 </script>
+
+<style>
+.stats-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.stats-mid-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 1100px) {
+  .stats-page-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .stats-mid-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>

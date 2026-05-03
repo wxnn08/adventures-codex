@@ -1,5 +1,5 @@
 <template>
-  <div :style="wrapStyle">
+  <div :style="wrapStyle" class="tabs-wrap">
     <button v-for="t in tabs" :key="t.id" @click="$emit('update:tab', t.id)" :style="btnStyle(t)">
       <span :style="{ marginRight: '8px', color: tab === t.id ? C.goldHi : C.gold }">{{ t.glyph }}</span>
       {{ t.label }}
@@ -25,6 +25,7 @@ const wrapStyle = {
   marginBottom: '18px',
   borderBottom: `2px solid ${C.rule}`,
   justifyContent: 'center',
+  flexWrap: 'wrap',
 }
 
 const btnStyle = (t) => {
@@ -49,3 +50,25 @@ const btnStyle = (t) => {
   }
 }
 </script>
+
+<style>
+@media (max-width: 700px) {
+  .tabs-wrap {
+    justify-content: stretch;
+    gap: 6px;
+  }
+
+  .tabs-wrap button {
+    flex: 1 1 calc(50% - 6px);
+    margin-right: 0 !important;
+    padding: 10px 14px !important;
+    letter-spacing: 0.18em !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .tabs-wrap button {
+    flex-basis: 100%;
+  }
+}
+</style>

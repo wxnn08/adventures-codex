@@ -1,8 +1,8 @@
 <template>
-  <div :style="shellStyle">
+  <div :style="shellStyle" class="adventure-shell">
     <!-- Sheet container -->
-    <div :style="sheetContainerStyle" style="flex: 1; min-width: 0;">
-      <div style="max-width: 1280px; margin: 0 auto;">
+    <div :style="sheetContainerStyle" class="sheet-shell">
+      <div :style="contentShellStyle">
         <Toolbar :char="char" :reset="resetChar" />
 
         <!-- Back-to-owner banner -->
@@ -83,6 +83,7 @@ const resetChar = () => {
 
 const shellStyle = {
   display: 'flex',
+  flexDirection: 'row',
   minHeight: '100vh',
   background: `
     radial-gradient(ellipse at 20% 0%, rgba(245,230,200,0.9) 0%, transparent 55%),
@@ -100,6 +101,13 @@ const shellStyle = {
 const sheetContainerStyle = {
   flex: 1,
   padding: '24px 32px 40px',
+  minWidth: 0,
+}
+
+const contentShellStyle = {
+  maxWidth: '1280px',
+  margin: '0 auto',
+  width: '100%',
   minWidth: 0,
 }
 
@@ -158,6 +166,30 @@ const footerStyle = {
   50% {
     filter: brightness(1.08) saturate(1.08);
     transform: scale(1.01);
+  }
+}
+
+@media (max-width: 1200px) {
+  .sheet-shell {
+    padding: 20px 20px 32px !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .sheet-shell {
+    padding: 18px 16px 28px !important;
+  }
+}
+
+@media (max-width: 960px) {
+  .adventure-shell {
+    flex-direction: column !important;
+  }
+}
+
+@media (max-width: 700px) {
+  .sheet-shell {
+    padding: 14px 12px 24px !important;
   }
 }
 </style>

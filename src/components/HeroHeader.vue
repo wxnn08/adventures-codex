@@ -1,6 +1,6 @@
 <template>
   <Frame ornate :style-overrides="{ marginBottom: '18px', padding: '20px 28px 18px' }">
-    <div :style="heroRowStyle">
+    <div :style="heroRowStyle" class="hero-row">
       <div :style="nameBlockStyle">
         <div :style="kickerStyle">·&nbsp;&nbsp;Adventurer's Codex&nbsp;&nbsp;·</div>
         <input
@@ -20,7 +20,7 @@
         />
       </div>
     </div>
-    <div :style="metaGrid">
+    <div :style="metaGrid" class="hero-meta-grid">
       <div v-for="[k, lbl] in metaFields" :key="k">
         <AppInput
           :model-value="char[k]"
@@ -118,3 +118,42 @@ const levelLabelStyle = {
 
 const metaGrid = { display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '14px' }
 </script>
+
+<style>
+@media (max-width: 900px) {
+  .hero-row {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    align-items: stretch !important;
+  }
+
+  .hero-row > div:first-child {
+    padding-left: 0 !important;
+  }
+
+  .hero-row input {
+    font-size: 30px !important;
+  }
+
+  .hero-meta-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-meta-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .hero-meta-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .hero-row input {
+    font-size: 24px !important;
+  }
+}
+</style>
