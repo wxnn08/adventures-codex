@@ -1,13 +1,27 @@
 <template>
-  <div :style="rootStyle">
-    <div style="max-width: 1280px; margin: 0 auto;">
-      <Toolbar :char="char" :reset="reset" />
-      <HeroHeader :char="char" :update="update" />
-      <Tabs :tab="tab" @update:tab="v => tab = v" />
-      <StatsPage  v-if="tab === 'stats'"  :char="char" :update="update" />
-      <BioPage    v-else-if="tab === 'bio'"    :char="char" :update="update" />
-      <SpellsPage v-else-if="tab === 'spells'" :char="char" :update="update" />
-      <div :style="footerStyle">✦&nbsp;&nbsp;·&nbsp;&nbsp;✦&nbsp;&nbsp;·&nbsp;&nbsp;✦</div>
+  <div :style="shellStyle">
+    <!-- Left drawer -->
+    <AdventureDrawer v-if="drawerOpen" />
+
+    <!-- Sheet container -->
+    <div :style="sheetContainerStyle">
+      <div style="max-width: 1280px; margin: 0 auto;">
+        <Toolbar :char="char" :reset="resetChar" :on-toggle-drawer="toggleDrawer" />
+
+        <!-- Back-to-owner banner -->
+        <div v-if="char && !isViewingOwner()" :style="bannerStyle">
+          Viewing <strong>{{ char.name || 'Party Member' }}</strong>
+          <button @click="backToOwner" :style="bannerBtnStyle">← Back to my character</button>
+        </div>
+
+        <HeroHeader v-if="char" :char="char" :update="updateChar" />
+        <Tabs v-if="char" :tab="tab" @update:tab="v => tab = v" />
+        <StatsPage  v-if="char && tab === 'stats'"  :char="char" :update="updateChar" />
+        <BioPage    v-else-if="char && tab === 'bio'"    :char="char" :update="updateChar" />
+        <SpellsPage v-else-if="char && tab === 'spells'" :char="char" :update="updateChar" />
+        <div v-else-if="!char" :style="loadingStyle">Loading…</div>
+        <div :style="footerStyle">✦&nbsp;&nbsp;·&nbsp;&nbsp;✦&nbsp;&nbsp;·&nbsp;&nbsp;✦</div>
+      </div>
     </div>
   </div>
 </template>
@@ -20,13 +34,24 @@ import Tabs from './components/Tabs.vue'
 import StatsPage from './components/StatsPage.vue'
 import BioPage from './components/BioPage.vue'
 import SpellsPage from './components/SpellsPage.vue'
-import { useCharacter } from './composables/useCharacter.js'
+import AdventureDrawer from './components/drawer/AdventureDrawer.vue'
+import { useCurrentCharacter } from './composables/useCurrentCharacter.js'
+import { useAdventureDrawer } from './composables/useAdventureDrawer.js'
+import { blankCharacter } from './tokens.js'
 import { C, FONT_BODY, FONT_DISPLAY } from './tokens.js'
 
-const { char, update, reset } = useCharacter('dnd5e-parchment-final')
+const { char, update: updateChar, backToOwner, isViewingOwner } = useCurrentCharacter()
+const { open: drawerOpen, toggle: toggleDrawer } = useAdventureDrawer()
 const tab = ref('stats')
 
-const rootStyle = {
+const resetChar = () => {
+  if (confirm('Reset this character? This cannot be undone.')) {
+    updateChar(blankCharacter())
+  }
+}
+
+const shellStyle = {
+  display: 'flex',
   minHeight: '100vh',
   background: `
     radial-gradient(ellipse at 20% 0%, rgba(245,230,200,0.9) 0%, transparent 55%),
@@ -39,7 +64,46 @@ const rootStyle = {
   backgroundColor: '#ede0c4',
   color: C.ink,
   fontFamily: FONT_BODY,
+}
+
+const sheetContainerStyle = {
+  flex: 1,
   padding: '24px 32px 40px',
+  minWidth: 0,
+}
+
+const bannerStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  background: `rgba(139,90,43,0.1)`,
+  border: `1px solid ${C.ruleSoft}`,
+  padding: '8px 16px',
+  marginBottom: '12px',
+  fontFamily: FONT_DISPLAY,
+  fontSize: '11px',
+  letterSpacing: '0.12em',
+  color: C.inkFaint,
+}
+
+const bannerBtnStyle = {
+  background: 'transparent',
+  border: `1px solid ${C.rule}`,
+  color: C.inkFaint,
+  padding: '3px 10px',
+  fontFamily: FONT_DISPLAY,
+  fontSize: '9px',
+  letterSpacing: '0.2em',
+  textTransform: 'uppercase',
+  cursor: 'pointer',
+}
+
+const loadingStyle = {
+  textAlign: 'center',
+  padding: '60px',
+  fontFamily: FONT_DISPLAY,
+  color: C.gold,
+  letterSpacing: '0.3em',
 }
 
 const footerStyle = {

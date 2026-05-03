@@ -1,6 +1,10 @@
 <template>
   <div :style="wrapStyle">
-    <div :style="brandStyle">❦&nbsp;&nbsp;Dungeons &amp; Dragons 5e SRD&nbsp;&nbsp;❦</div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <button :style="btnStyle" @mouseenter="hover($event, true)" @mouseleave="hover($event, false)"
+        @click="onToggleDrawer">≡ Menu</button>
+      <div :style="brandStyle">❦&nbsp;&nbsp;Dungeons &amp; Dragons 5e SRD&nbsp;&nbsp;❦</div>
+    </div>
     <div style="display: flex; gap: 8px;">
       <button :style="btnStyle" @mouseenter="hover($event, true)" @mouseleave="hover($event, false)" @click="exportJSON">Export JSON</button>
       <button :style="btnStyle" @mouseenter="hover($event, true)" @mouseleave="hover($event, false)"
@@ -12,9 +16,14 @@
 <script setup>
 import { C, FONT_DISPLAY } from '../tokens.js'
 
-const props = defineProps({ char: Object, reset: Function })
+const props = defineProps({
+  char: Object,
+  reset: Function,
+  onToggleDrawer: { type: Function, default: () => {} },
+})
 
 const exportJSON = () => {
+  if (!props.char) return
   const blob = new Blob([JSON.stringify(props.char, null, 2)], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
@@ -29,13 +38,8 @@ const confirmReset = () => {
 }
 
 const hover = (e, on) => {
-  if (on) {
-    e.currentTarget.style.background = C.rule
-    e.currentTarget.style.color = C.paperHi
-  } else {
-    e.currentTarget.style.background = 'transparent'
-    e.currentTarget.style.color = C.inkFaint
-  }
+  e.currentTarget.style.background = on ? C.rule       : 'transparent'
+  e.currentTarget.style.color      = on ? C.paperHi    : C.inkFaint
 }
 
 const wrapStyle = {
