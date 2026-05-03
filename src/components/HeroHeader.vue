@@ -1,13 +1,24 @@
 <template>
   <Frame ornate :style-overrides="{ marginBottom: '18px', padding: '20px 28px 18px' }">
-    <div style="text-align: center; margin-bottom: 14px;">
-      <div :style="kickerStyle">·&nbsp;&nbsp;Adventurer's Codex&nbsp;&nbsp;·</div>
-      <input
-        :value="char.name || ''"
-        @input="e => update({ name: e.target.value })"
-        placeholder="Character Name"
-        :style="nameStyle"
-      />
+    <div :style="heroRowStyle">
+      <div :style="nameBlockStyle">
+        <div :style="kickerStyle">·&nbsp;&nbsp;Adventurer's Codex&nbsp;&nbsp;·</div>
+        <input
+          :value="char.name || ''"
+          @input="e => update({ name: e.target.value })"
+          placeholder="Character Name"
+          :style="nameStyle"
+        />
+      </div>
+      <div :style="levelBlockStyle">
+        <Label :style-overrides="levelLabelStyle">Level</Label>
+        <AppInput
+          :model-value="char.level"
+          @update:model-value="v => update({ level: v })"
+          align="center"
+          :style-overrides="levelInputStyle"
+        />
+      </div>
     </div>
     <div :style="metaGrid">
       <div v-for="[k, lbl] in metaFields" :key="k">
@@ -33,13 +44,26 @@ defineProps({ char: Object, update: Function })
 
 const metaFields = [
   ['class',       'Class'],
-  ['level',       'Level'],
   ['race',        'Race'],
   ['background',  'Background'],
   ['alignment',   'Alignment'],
   ['xp',          'Experience'],
   ['playerName',  'Player'],
 ]
+
+const heroRowStyle = {
+  display: 'grid',
+  gridTemplateColumns: '1fr 104px',
+  alignItems: 'end',
+  gap: '18px',
+  marginBottom: '14px',
+}
+
+const nameBlockStyle = {
+  minWidth: 0,
+  textAlign: 'center',
+  paddingLeft: '104px',
+}
 
 const kickerStyle = {
   fontFamily: FONT_DISPLAY,
@@ -65,5 +89,32 @@ const nameStyle = {
   letterSpacing: '0.04em',
 }
 
-const metaGrid = { display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '14px' }
+const levelBlockStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'flex-end',
+  minWidth: 0,
+}
+
+const levelInputStyle = {
+  width: '100%',
+  fontFamily: FONT_DISPLAY,
+  fontSize: '34px',
+  fontWeight: 700,
+  lineHeight: 1.05,
+  color: C.ink,
+  padding: '0 0 5px',
+  border: 'none',
+  borderBottom: `1px solid ${C.rule}`,
+  background: 'transparent',
+  letterSpacing: '0.04em',
+}
+
+const levelLabelStyle = {
+  fontSize: '9px',
+  margin: '0 0 5px',
+}
+
+const metaGrid = { display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '14px' }
 </script>

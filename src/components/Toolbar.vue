@@ -4,6 +4,9 @@
       <div :style="brandStyle">❦&nbsp;&nbsp;Dungeons &amp; Dragons 5e SRD&nbsp;&nbsp;❦</div>
     </div>
     <div style="display: flex; gap: 8px;">
+      <button :style="guideBtnStyle(guideOpen)" @click="toggleGuide" title="Toggle player's guide">
+        ❦&nbsp; Guide
+      </button>
       <button :style="btnStyle" @mouseenter="hover($event, true)" @mouseleave="hover($event, false)" @click="exportJSON">Export JSON</button>
       <button :style="btnStyle" @mouseenter="hover($event, true)" @mouseleave="hover($event, false)"
         @click="confirmReset">Reset</button>
@@ -13,11 +16,14 @@
 
 <script setup>
 import { C, FONT_DISPLAY } from '../tokens.js'
+import { useGuideDrawer } from '../composables/useGuideDrawer.js'
 
 const props = defineProps({
   char: Object,
   reset: Function,
 })
+
+const { open: guideOpen, toggle: toggleGuide } = useGuideDrawer()
 
 const exportJSON = () => {
   if (!props.char) return
@@ -56,6 +62,21 @@ const brandStyle = {
   fontWeight: 600,
   whiteSpace: 'nowrap',
 }
+
+const guideBtnStyle = (active) => ({
+  background: active ? `linear-gradient(180deg, ${C.rule}, ${C.inkFaint})` : 'transparent',
+  border: `1px solid ${C.rule}`,
+  color: active ? C.paperHi : C.gold,
+  padding: '4px 14px',
+  fontFamily: FONT_DISPLAY,
+  fontSize: '9.5px',
+  letterSpacing: '0.22em',
+  textTransform: 'uppercase',
+  cursor: 'pointer',
+  fontWeight: 600,
+  transition: 'all 0.15s',
+  whiteSpace: 'nowrap',
+})
 
 const btnStyle = {
   background: 'transparent',

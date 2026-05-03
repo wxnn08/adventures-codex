@@ -1,7 +1,7 @@
 <template>
   <div :style="shellStyle">
     <!-- Sheet container -->
-    <div :style="sheetContainerStyle">
+    <div :style="sheetContainerStyle" style="flex: 1; min-width: 0;">
       <div style="max-width: 1280px; margin: 0 auto;">
         <Toolbar :char="char" :reset="resetChar" />
 
@@ -11,32 +11,69 @@
           <button @click="backToOwner" :style="bannerBtnStyle">← Back to my character</button>
         </div>
 
-        <HeroHeader v-if="char" :char="char" :update="updateChar" />
+        <div v-if="char" data-guide-section="header" :style="hlStyle('header')"><HeroHeader :char="char" :update="updateChar" /></div>
         <Tabs v-if="char" :tab="tab" @update:tab="v => tab = v" />
-        <StatsPage  v-if="char && tab === 'stats'"  :char="char" :update="updateChar" />
-        <BioPage    v-else-if="char && tab === 'bio'"    :char="char" :update="updateChar" />
-        <SpellsPage v-else-if="char && tab === 'spells'" :char="char" :update="updateChar" />
+        <div v-if="char && tab === 'stats'"><StatsPage :char="char" :update="updateChar" /></div>
+        <div v-else-if="char && tab === 'bio'" data-guide-section="bio" :style="hlStyle('bio')"><BioPage :char="char" :update="updateChar" /></div>
+        <div v-else-if="char && tab === 'spells'" data-guide-section="spells" :style="hlStyle('spells')"><SpellsPage :char="char" :update="updateChar" /></div>
         <div v-else-if="!char" :style="loadingStyle">Loading…</div>
         <div :style="footerStyle">✦&nbsp;&nbsp;·&nbsp;&nbsp;✦&nbsp;&nbsp;·&nbsp;&nbsp;✦</div>
       </div>
     </div>
+
+    <!-- Right guide drawer -->
+    <GuideDrawer v-if="guideOpen" />
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 import Toolbar from './components/Toolbar.vue'
 import HeroHeader from './components/HeroHeader.vue'
 import Tabs from './components/Tabs.vue'
 import StatsPage from './components/StatsPage.vue'
 import BioPage from './components/BioPage.vue'
 import SpellsPage from './components/SpellsPage.vue'
+import GuideDrawer from './components/drawer/GuideDrawer.vue'
 import { useCurrentCharacter } from './composables/useCurrentCharacter.js'
+import { useGuideDrawer } from './composables/useGuideDrawer.js'
+import { useHighlight } from './composables/useHighlight.js'
 import { blankCharacter } from './tokens.js'
 import { C, FONT_BODY, FONT_DISPLAY } from './tokens.js'
 
 const { char, update: updateChar, backToOwner, isViewingOwner } = useCurrentCharacter()
+const { open: guideOpen } = useGuideDrawer()
+const highlight = useHighlight()
 const tab = ref('stats')
+
+watch(
+  () => [highlight.active.value, highlight.tab.value],
+  async ([active, guideTab]) => {
+    if (!active) return
+    if (guideTab && tab.value !== guideTab) tab.value = guideTab
+
+    await nextTick()
+
+    const target = Array.from(document.querySelectorAll('[data-guide-section]'))
+      .find(el => (el.dataset.guideSection || '').split(/\s+/).includes(active))
+
+    target?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' })
+  },
+  { immediate: true },
+)
+
+function hlStyle(id) {
+  const isActive = highlight.active.value === id
+  return {
+    borderRadius: '3px',
+    background: isActive ? 'rgba(184,134,43,0.08)' : 'transparent',
+    boxShadow: isActive
+      ? `0 0 0 3px ${C.gold}, 0 0 0 7px rgba(184,134,43,0.18), 0 10px 28px rgba(84,52,24,0.2)`
+      : 'none',
+    animation: isActive ? 'guideFocusPulse 1.05s ease-in-out' : 'none',
+    transition: 'box-shadow 0.2s',
+  }
+}
 
 const resetChar = () => {
   if (confirm('Reset this character? This cannot be undone.')) {
@@ -110,3 +147,17 @@ const footerStyle = {
   textTransform: 'uppercase',
 }
 </script>
+
+<style>
+@keyframes guideFocusPulse {
+  0%, 100% {
+    filter: none;
+    transform: scale(1);
+  }
+
+  50% {
+    filter: brightness(1.08) saturate(1.08);
+    transform: scale(1.01);
+  }
+}
+</style>
