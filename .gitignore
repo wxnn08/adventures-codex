@@ -1,5 +1,26 @@
-node_modules
-dist
-.DS_Store
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.vite/
+coverage/
+
+# Local environment
+.env.local
+.env.*.local
+
+# Logs
 *.log
-.vite
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor and OS files
+.DS_Store
+.idea/
+.vscode/
+
+# Local assistant/project notes
+.claude/
