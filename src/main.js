@@ -1,10 +1,12 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import { getDefaultAdapter } from './storage/index.js'
-import { runLegacyMigration } from './storage/migrate.js'
+import { ensureInitialAdventure, runLegacyMigration } from './storage/migrate.js'
 
 async function boot() {
-  await runLegacyMigration(getDefaultAdapter())
+  const adapter = getDefaultAdapter()
+  await runLegacyMigration(adapter)
+  await ensureInitialAdventure(adapter)
   createApp(App).mount('#app')
 }
 

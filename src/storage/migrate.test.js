@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { MemoryAdapter } from './MemoryAdapter.js'
-import { runLegacyMigration } from './migrate.js'
+import { ensureInitialAdventure, runLegacyMigration } from './migrate.js'
 import { AdventureRepository } from './AdventureRepository.js'
 import { CharacterRepository } from './CharacterRepository.js'
 
@@ -54,6 +54,38 @@ describe('runLegacyMigration', () => {
 
     const charRepo = new CharacterRepository(adapter)
     const chars = await charRepo.list()
+    expect(chars).toHaveLength(1)
+  })
+
+  it('creates a starter adventure and character on fresh storage', async () => {
+    await ensureInitialAdventure(adapter)
+
+    const advRepo = new AdventureRepository(adapter)
+    const charRepo = new CharacterRepository(adapter)
+
+    const adventure = await advRepo.getCurrent()
+    expect(adventure).not.toBeNull()
+    expect(adventure.ownerCharacterId).toBeTruthy()
+    expect(adventure.party).toEqual([
+      { characterId: adventure.ownerCharacterId, role: 'Player Character' },
+    ])
+
+    const char = await charRepo.get(adventure.ownerCharacterId)
+    expect(char).not.toBeNull()
+    expect(char.id).toBe(adventure.ownerCharacterId)
+  })
+
+  it('does not create duplicates when starter data already exists', async () => {
+    await ensureInitialAdventure(adapter)
+    await ensureInitialAdventure(adapter)
+
+    const advRepo = new AdventureRepository(adapter)
+    const charRepo = new CharacterRepository(adapter)
+
+    const adventure = await advRepo.getCurrent()
+    const chars = await charRepo.list()
+
+    expect(adventure.party).toHaveLength(1)
     expect(chars).toHaveLength(1)
   })
 })

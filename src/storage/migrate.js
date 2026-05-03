@@ -28,3 +28,26 @@ export async function runLegacyMigration(adapter) {
   await advRepo.addPartyMember({ characterId: character.id })
   await adapter.remove(LEGACY_KEY)
 }
+
+/**
+ * Ensure a brand-new install has something to render.
+ *
+ * Fresh browsers have neither the legacy single-blob key nor the newer
+ * adventure/character records. Without a current adventure and owner character,
+ * the app stays on the loading state indefinitely.
+ *
+ * @param {import('./StorageAdapter.js').StorageAdapter} adapter
+ */
+export async function ensureInitialAdventure(adapter) {
+  const advRepo = new AdventureRepository(adapter)
+  const current = await advRepo.getCurrent()
+  if (current?.ownerCharacterId) return current
+
+  const charRepo = new CharacterRepository(adapter)
+  const character = await charRepo.create()
+  const adventure = await advRepo.create({ ownerCharacterId: character.id })
+  await advRepo.setCurrent(adventure.id)
+  await advRepo.addPartyMember({ characterId: character.id, role: 'Player Character' })
+
+  return advRepo.getCurrent()
+}
