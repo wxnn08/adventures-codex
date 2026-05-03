@@ -1,8 +1,6 @@
 <template>
   <div :style="wrapStyle">
     <div style="display: flex; align-items: center; gap: 12px;">
-      <button :style="btnStyle" @mouseenter="hover($event, true)" @mouseleave="hover($event, false)"
-        @click="onToggleDrawer">≡ Menu</button>
       <div :style="brandStyle">❦&nbsp;&nbsp;Dungeons &amp; Dragons 5e SRD&nbsp;&nbsp;❦</div>
     </div>
     <div style="display: flex; gap: 8px;">
@@ -19,7 +17,6 @@ import { C, FONT_DISPLAY } from '../tokens.js'
 const props = defineProps({
   char: Object,
   reset: Function,
-  onToggleDrawer: { type: Function, default: () => {} },
 })
 
 const exportJSON = () => {

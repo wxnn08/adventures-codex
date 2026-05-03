@@ -1,12 +1,9 @@
 <template>
   <div :style="shellStyle">
-    <!-- Left drawer -->
-    <AdventureDrawer v-if="drawerOpen" />
-
     <!-- Sheet container -->
     <div :style="sheetContainerStyle">
       <div style="max-width: 1280px; margin: 0 auto;">
-        <Toolbar :char="char" :reset="resetChar" :on-toggle-drawer="toggleDrawer" />
+        <Toolbar :char="char" :reset="resetChar" />
 
         <!-- Back-to-owner banner -->
         <div v-if="char && !isViewingOwner()" :style="bannerStyle">
@@ -34,14 +31,11 @@ import Tabs from './components/Tabs.vue'
 import StatsPage from './components/StatsPage.vue'
 import BioPage from './components/BioPage.vue'
 import SpellsPage from './components/SpellsPage.vue'
-import AdventureDrawer from './components/drawer/AdventureDrawer.vue'
 import { useCurrentCharacter } from './composables/useCurrentCharacter.js'
-import { useAdventureDrawer } from './composables/useAdventureDrawer.js'
 import { blankCharacter } from './tokens.js'
 import { C, FONT_BODY, FONT_DISPLAY } from './tokens.js'
 
 const { char, update: updateChar, backToOwner, isViewingOwner } = useCurrentCharacter()
-const { open: drawerOpen, toggle: toggleDrawer } = useAdventureDrawer()
 const tab = ref('stats')
 
 const resetChar = () => {
